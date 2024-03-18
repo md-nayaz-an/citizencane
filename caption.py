@@ -106,8 +106,8 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
             top_k_scores, top_k_words = scores.view(-1).topk(k, 0, True, True)  # (s)
 
         # Convert unrolled indices to actual indices of scores
-        prev_word_inds = top_k_words / vocab_size  # (s)
-        next_word_inds = top_k_words % vocab_size  # (s)
+        prev_word_inds = (top_k_words / vocab_size).long()  # (s)
+        next_word_inds = (top_k_words % vocab_size).long()  # (s)
 
         # Add new words to sequences, alphas
         seqs = torch.cat([seqs[prev_word_inds], next_word_inds.unsqueeze(1)], dim=1)  # (s, step+1)

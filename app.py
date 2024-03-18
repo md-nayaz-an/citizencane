@@ -28,7 +28,7 @@ UPLOAD_FOLDER = os.path.basename('uploads')
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-model='./BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar'
+model='./data/checkpoint.pth.tar'
 
 checkpoint = torch.load(model,map_location = device)
 decoder = checkpoint['decoder']
@@ -37,7 +37,7 @@ decoder.eval()
 encoder = checkpoint['encoder']
 encoder = encoder.to(device)
 encoder.eval()
-with open('./word_map.json', 'r') as j:
+with open('./data/word_map.json', 'r') as j:
     word_map = json.load(j)
 rev_word_map = {v: k for k, v in word_map.items()}  # ix2word
 
@@ -48,14 +48,14 @@ def student():
 #blind-ears
 @app.route('/result',methods = ['POST'])
 def hello_world():
-    print(request.files)
+#    print(request.files)
     print(request.files['image'])
     file = request.files['image']
 
-    for param_name, param in decoder.named_parameters():
-        print(f"{param_name}: {param.device}")
-    for param_name, param in encoder.named_parameters():
-        print(f"{param_name}: {param.device}")
+#    for param_name, param in decoder.named_parameters():
+#        print(f"{param_name}: {param.device}")
+#    for param_name, param in encoder.named_parameters():
+#        print(f"{param_name}: {param.device}")
     if file:
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
